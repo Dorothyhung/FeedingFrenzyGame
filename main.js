@@ -6,11 +6,11 @@ canvas.height = 700;
 document.body.appendChild(canvas);
 
 let chessBoard = [
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X']
+    ['X','X','X','X','X','X'],
+    ['X','X','X','X','X','X'],
+    ['X','X','X','X','X','X'],
+    ['X','X','X','X','X','X'],
+    ['X','X','X','X','X','X']
 ];
 console.log(chessBoard)
 
@@ -87,6 +87,7 @@ var shark = {
     y: 0  // where on the canvas are they?
 };
 var fish = {
+    speed: 50,
     x: 0,
     y: 0
 };
@@ -105,6 +106,9 @@ var jellyfish3 = {
 var fishEaten = 0;
 let lostGame = false;
 var counter = 0;
+
+var fishRandomDirection = [];
+
 
 // Handle keyboard controls
 var keysDown = {};
@@ -162,6 +166,23 @@ var update = function (modifier) {
         up = false;
         down = false;
     }
+    if(Math.floor(Math.random() * 5) == 1) {
+        fish.x -= fish.speed * modifier;
+        fish.y += fish.speed * modifier;
+    }
+    if(Math.floor(Math.random() * 5) == 2) {
+        fish.x += fish.speed * modifier;
+        fish.y -= fish.speed * modifier;
+    }
+    if(Math.floor(Math.random() * 5) == 3) {
+        fish.x += fish.speed * modifier;
+        fish.y += fish.speed * modifier;
+    }
+    else {
+        fish.x -= fish.speed * modifier;
+        fish.y -= fish.speed * modifier;
+    }
+
 
     //  Checks if shark is touching fish
     if (
@@ -220,38 +241,46 @@ var update = function (modifier) {
 
     //  Checks if shark is touching jellyfish
     if (
-        shark.x <= (jellyfish1.x + 25)
+        shark.x <= (jellyfish1.x + 50)
         && jellyfish1.x <= (shark.x + 125)
         && shark.y <= (jellyfish1.y + 75)
         && jellyfish1.y <= (shark.y + 125)
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver();
+        gameOver("jellyfish");
         window.location.reload();
     }
 
     if (
-        shark.x <= (jellyfish2.x + 25)
+        shark.x <= (jellyfish2.x + 50)
         && jellyfish2.x <= (shark.x + 125)
         && shark.y <= (jellyfish2.y + 75)
         && jellyfish2.y <= (shark.y + 125)
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver();
+        gameOver("jellyfish");
         window.location.reload();
     }
 
     if (
-        shark.x <= (jellyfish3.x + 25)
+        shark.x <= (jellyfish3.x + 50)
         && jellyfish3.x <= (shark.x + 125)
         && shark.y <= (jellyfish3.y + 75)
         && jellyfish3.y <= (shark.y + 125)
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver();
+        gameOver("jellyfish");
+        window.location.reload();
+    }
+
+    //if fish touches edge
+    if (fish.x <= 0 || fish.x > 1490 || fish.y < 0 || fish.y > 700) {
+        soundEfx.src = soundEaten;
+        soundEfx.play(); 
+        gameOver("fish");
         window.location.reload();
     }
 };
@@ -304,9 +333,10 @@ var reset = function () {
             chessBoard[i][j] = "X";
         }
     }
-    shark.x = savedSharkX;
-    shark.y = savedSharkY;
-    placeItem(fish);
+    shark.x = canvas.width / 2;
+    shark.y = canvas.height / 2;
+    fish.x = 1400;
+    fish.y = 650;
     placeItem(jellyfish1);
     placeItem(jellyfish2);
     placeItem(jellyfish3);
@@ -339,9 +369,14 @@ var placeItem = function(item) {
     }
 }
 
-let gameOver = function() {
+let gameOver = function(item) {
     document.getElementById('soundgamelost').play();
-    alert("You got stung by a jellyfish, game over!");
+    if (item == 'jellyfish') {
+        alert("You got stung by a jellyfish, game over!");
+    }
+    if (item == 'fish') {
+        alert("Oh no! The fish got away, game over!");
+    }
     gameOver = true;
     reset();
     fishEaten = 0;
