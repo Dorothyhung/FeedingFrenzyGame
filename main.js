@@ -334,7 +334,7 @@ var reset = function () {
         }
     }
     shark.x = canvas.width / 2;
-    shark.y = canvas.height / 2;
+    shark.y = 250;
     fish.x = 1400;
     fish.y = 650;
     placeItem(jellyfish1);
