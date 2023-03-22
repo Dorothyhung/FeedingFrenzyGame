@@ -5,15 +5,6 @@ canvas.width = 1500;
 canvas.height = 700;
 document.body.appendChild(canvas);
 
-let chessBoard = [
-    ['X','X','X','X','X','X'],
-    ['X','X','X','X','X','X'],
-    ['X','X','X','X','X','X'],
-    ['X','X','X','X','X','X'],
-    ['X','X','X','X','X','X']
-];
-console.log(chessBoard)
-
 var savedSharkX = canvas.width / 2;
 var savedSharkY = canvas.height / 2;
 
@@ -87,21 +78,30 @@ var shark = {
     y: 0  // where on the canvas are they?
 };
 var fish = {
-    speed: 50,
+    speed: 150,
     x: 0,
-    y: 0
+    y: 0,
+    xbool: false,
+    ybool: false
 };
 var jellyfish1 = {
+    speed: 100,
     x: 100,
-    y: 200
+    y: 200,
+    bool: true
 };
 var jellyfish2 = {
+    speed: 100,
     x: 1200,
-    y: 200
+    y: 200,
+    bool: true
 };
 var jellyfish3 = {
+    speed: 100,
     x: 900,
-    y: 550
+    y: 550,
+    xbool: false,
+    ybool: false
 };
 var fishEaten = 0;
 let lostGame = false;
@@ -166,21 +166,49 @@ var update = function (modifier) {
         up = false;
         down = false;
     }
-    if(Math.floor(Math.random() * 5) == 1) {
+
+    //Control fish directions
+    if(fish.xbool) {
+        fish.x += fish.speed * modifier;
+    }
+    if (!fish.xbool) {
         fish.x -= fish.speed * modifier;
+    }
+    if(fish.ybool) {
         fish.y += fish.speed * modifier;
     }
-    if(Math.floor(Math.random() * 5) == 2) {
-        fish.x += fish.speed * modifier;
+    if (!fish.ybool) {
         fish.y -= fish.speed * modifier;
     }
-    if(Math.floor(Math.random() * 5) == 3) {
-        fish.x += fish.speed * modifier;
-        fish.y += fish.speed * modifier;
+
+    //Control jellyfish directions
+    if(jellyfish1.bool) {
+        jellyfish1.x += jellyfish1.speed * modifier;
+        jellyfish1.y += jellyfish1.speed * modifier;
     }
-    else {
-        fish.x -= fish.speed * modifier;
-        fish.y -= fish.speed * modifier;
+    if (!jellyfish1.bool) {
+        jellyfish1.x -= jellyfish1.speed * modifier;
+        jellyfish1.y -= jellyfish1.speed * modifier;
+    }
+    if(jellyfish2.bool) {
+        jellyfish2.x += jellyfish2.speed * modifier;
+        jellyfish2.y -= jellyfish2.speed * modifier;
+    }
+    if (!jellyfish2.bool) {
+        jellyfish2.x -= jellyfish2.speed * modifier;
+        jellyfish2.y += jellyfish2.speed * modifier;
+    }
+    if(jellyfish3.xbool) {
+        jellyfish3.x += jellyfish3.speed * modifier;
+    }
+    if (!jellyfish3.xbool) {
+        jellyfish3.x -= jellyfish3.speed * modifier;
+    }
+    if(jellyfish3.ybool) {
+        jellyfish3.y += jellyfish3.speed * modifier;
+    }
+    if (!jellyfish3.ybool) {
+        jellyfish3.y -= jellyfish3.speed * modifier;
     }
 
 
@@ -198,8 +226,6 @@ var update = function (modifier) {
         soundEfx.play(); 
         ++fishEaten;       // keep track of our “score”
         
-        savedSharkX = shark.x;
-        savedSharkY = shark.y;
         //reset();       // start a new cycle
         if (fishEaten == 3) {
             document.getElementById('sound').play();
@@ -276,12 +302,59 @@ var update = function (modifier) {
         window.location.reload();
     }
 
-    //if fish touches edge
-    if (fish.x <= 0 || fish.x > 1490 || fish.y < 0 || fish.y > 700) {
-        soundEfx.src = soundEaten;
-        soundEfx.play(); 
-        gameOver("fish");
-        window.location.reload();
+    if (fish.x <= 0) {
+        fish.xbool = true;
+        fish.x += fish.speed * modifier;
+    }
+    if (fish.x >= 1300) {
+        fish.xbool = false;
+        fish.x -= fish.speed * modifier;
+    }
+    if (fish.y <= 0) {
+        fish.ybool = true;
+        fish.y += fish.speed * modifier;
+    }
+    if (fish.y >= 660) {
+        fish.ybool = false;
+        fish.y -= fish.speed * modifier;
+    }
+
+    //if jellyfish touches edge
+    if (jellyfish1.x <= 0 || jellyfish1.y < 0) {
+        jellyfish1.bool = true;
+        jellyfish1.x += jellyfish1.speed * modifier;
+        jellyfish1.y += jellyfish1.speed * modifier;
+    }
+    if (jellyfish1.x > 1400 || jellyfish1.y > 600) {
+        jellyfish1.bool = false;
+        jellyfish1.x -= jellyfish1.speed * modifier;
+        jellyfish1.y -= jellyfish1.speed * modifier;
+    }
+    if (jellyfish2.x <= 0 || jellyfish2.y > 600) {
+        jellyfish2.bool = true;
+        jellyfish2.x += jellyfish2.speed * modifier;
+        jellyfish2.y -= jellyfish2.speed * modifier;
+    }
+    if (jellyfish2.x > 1400 || jellyfish2.y < 0) {
+        jellyfish2.bool = false;
+        jellyfish2.x -= jellyfish2.speed * modifier;
+        jellyfish2.y += jellyfish2.speed * modifier;
+    }
+    if (jellyfish3.x <= 0) {
+        jellyfish3.xbool = true;
+        jellyfish3.x += jellyfish3.speed * modifier;
+    }
+    if (jellyfish3.x >= 1400) {
+        jellyfish3.xbool = false;
+        jellyfish3.x -= jellyfish3.speed * modifier;
+    }
+    if (jellyfish3.y <= 0) {
+        jellyfish3.ybool = true;
+        jellyfish3.y += jellyfish3.speed * modifier;
+    }
+    if (jellyfish3.y >= 600) {
+        jellyfish3.ybool = false;
+        jellyfish3.y -= jellyfish3.speed * modifier;
     }
 };
 
@@ -323,50 +396,25 @@ var main = function () {
 
 // Reset the game when the player catches a fish
 var reset = function () {
-    /* if (fishEaten == 3) {
-        document.getElementById('sound').play();
-        alert("You won!");
-        window.location.reload();
-    } */
-    for (let i = 0; i < chessBoard.length; i++) {
-        for (let j = 0; j < chessBoard[0].length; j++) {
-            chessBoard[i][j] = "X";
-        }
-    }
     shark.x = canvas.width / 2;
     shark.y = 250;
-    fish.x = 1400;
-    fish.y = 650;
+    placeItem(fish);
     placeItem(jellyfish1);
     placeItem(jellyfish2);
     placeItem(jellyfish3);
 };
 
 var placeItem = function(item) {
-    //item.x = (Math.random() * (canvas.width - 200));
-    //item.y = (Math.random() * (canvas.height - 200));
-
-
-    //This is to make sure none of the characters end of touching each other
-    //This sitll doesn't work video 1:25
-    let a = 0;
-    let b = 0;
-    let success = false;
-
-    while(!success) {
-        a = Math.floor(Math.random() * 5);
-        b = Math.floor(Math.random() * 5);
-        if (chessBoard[a][b] == "O") {
-            success = true;
-        } else {
-            chessBoard[a][b] = "O";
-            /* item.x = ((a*150) +50);
-            item.y = ((b*65) +50); */
-            item.x = ((a*280) +50);
-            item.y = ((b*120) +50);
-        }
-        
+    let xposition = 700;
+    let yposition = 300;
+    while (xposition >= 600 & xposition <= 800) {
+        xposition = Math.random() * 1400;
     }
+    while (yposition >= 200 && yposition <= 400) {
+        yposition = Math.random() * 600;
+    }
+    item.x = xposition;
+    item.y = yposition;
 }
 
 let gameOver = function(item) {
