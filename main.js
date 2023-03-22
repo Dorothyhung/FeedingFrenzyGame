@@ -38,6 +38,25 @@ var up = false;
 var down = false;
 
 
+var fishrows = 2;
+var fishcols = 3;
+var fishtrackLeft = 0;
+var fishtrackRight = 1;
+
+var fishspriteWidth = 269; // also spriteWidth/cols;
+var fishspriteHeight = 155; // also spriteHeight/rows;
+var fishwidth = fishspriteWidth / fishcols;
+var fishheight = fishspriteHeight / fishrows;
+
+var fishcurXFrame = 0; // start on left side
+var fishframeCount = 3; // 3 frames per row
+//x and y coordinates of the overall sprite image to get the single framewe want
+var fishsrcX = 0; // our image has no borders or other stuff
+var fishsrcY = 0;
+var fishleft = true;
+var fishright = false;
+
+
 // Background image
 var bgReady = false;
 var bgImage = new Image();
@@ -60,7 +79,8 @@ var fishImage = new Image();
 fishImage.onload = function () {
     fishReady = true;
 };
-fishImage.src = "images/fish.png";
+//fishImage.src = "images/fish.png";
+fishImage.src = "images/fishspritesheet2.png";
 
 // Jellyfish images
 var jellyfishReady = false;
@@ -106,6 +126,7 @@ var jellyfish3 = {
 var fishEaten = 0;
 let lostGame = false;
 var counter = 0;
+var fishcounter = 0;
 
 var fishRandomDirection = [];
 
@@ -170,9 +191,13 @@ var update = function (modifier) {
     //Control fish directions
     if(fish.xbool) {
         fish.x += fish.speed * modifier;
+        fishleft = false;
+        fishright = true;
     }
     if (!fish.xbool) {
         fish.x -= fish.speed * modifier;
+        fishleft = true;
+        fishright = false;
     }
     if(fish.ybool) {
         fish.y += fish.speed * modifier;
@@ -214,10 +239,10 @@ var update = function (modifier) {
 
     //  Checks if shark is touching fish
     if (
-        shark.x <= (fish.x + 50)
+        shark.x <= (fish.x + 75)
         && fish.x <= (shark.x +50)
         && shark.y <= (fish.y + 50)
-        && fish.y <= (shark.y + 50)
+        && fish.y <= (shark.y + 75)
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
@@ -251,6 +276,22 @@ var update = function (modifier) {
     }
     if (down) {
         srcY = trackDown * height;
+    }
+
+    //Animate shark
+    if (fishcounter == 10) { // adjust this to change "walking speed" of animation
+        fishcurXFrame = ++fishcurXFrame % frameCount;
+        fishcounter = 0;
+    } else {
+        fishcounter++;
+    }
+    
+    fishsrcX = fishcurXFrame * fishwidth;
+    if (fishleft) {
+        fishsrcY = fishtrackLeft * fishheight;
+    }
+    if (fishright) {
+        fishsrcY = fishtrackRight * fishheight;
     }
 
     //  Checks if shark is touching jellyfish
@@ -294,10 +335,14 @@ var update = function (modifier) {
     if (fish.x <= 0) {
         fish.xbool = true;
         fish.x += fish.speed * modifier;
+        fishright = true;
+        fishleft = false;
     }
     if (fish.x >= 1300) {
         fish.xbool = false;
         fish.x -= fish.speed * modifier;
+        fishright = false;
+        fishleft = true;
     }
     if (fish.y <= 0) {
         fish.ybool = true;
@@ -362,7 +407,8 @@ var render = function () {
          ctx.drawImage(sharkImage, srcX, srcY, width, height, shark.x, shark.y, width, height);
     }
     if (fishReady) {
-        ctx.drawImage(fishImage, fish.x, fish.y);
+        //ctx.drawImage(fishImage, fish.x, fish.y);
+        ctx.drawImage(fishImage, fishsrcX, fishsrcY, fishwidth, fishheight, fish.x, fish.y, fishwidth, fishheight);
     }
     if (jellyfishReady) {
         ctx.drawImage(jellyfishImage, jellyfish1.x, jellyfish1.y);
