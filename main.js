@@ -131,8 +131,8 @@ var update = function (modifier) {
         if (shark.y < 0) {
             shark.y = 0;
         }
-        left = false; // for animation
-        right = false; // for animation
+        left = false;
+        right = false;
         up = true;
         down = false;
     }
@@ -141,8 +141,8 @@ var update = function (modifier) {
         if (shark.y > 520) {
             shark.y = 520;
         }
-        left = false; // for animation
-        right = false; // for animation
+        left = false;
+        right = false;
         up = false;
         down = true;
     }
@@ -151,8 +151,8 @@ var update = function (modifier) {
         if (shark.x < 0) {
             shark.x = 0;
         }
-        left = true; // for animation
-        right = false; // for animation
+        left = true;
+        right = false;
         up = false;
         down = false;
     }
@@ -161,8 +161,8 @@ var update = function (modifier) {
         if (shark.x > 1300) {
             shark.x = 1300;
         }
-        left = false; // for animation
-        right = true; // for animation
+        left = false;
+        right = true;
         up = false;
         down = false;
     }
@@ -215,18 +215,14 @@ var update = function (modifier) {
     //  Checks if shark is touching fish
     if (
         shark.x <= (fish.x + 50)
-        && fish.x <= (shark.x +100)
+        && fish.x <= (shark.x +50)
         && shark.y <= (fish.y + 50)
-        && fish.y <= (shark.y + 100)
+        && fish.y <= (shark.y + 50)
     ) {
-        console.log("here");
-        console.log("shark=" + shark.x + ", " + shark.y);
-        console.log("fish=" + fish.x + ", " + fish.y);
         soundEfx.src = soundEaten;
         soundEfx.play(); 
         ++fishEaten;       // keep track of our “score”
         
-        //reset();       // start a new cycle
         if (fishEaten == 3) {
             document.getElementById('sound').play();
             alert("You won!");
@@ -235,23 +231,19 @@ var update = function (modifier) {
         reset();
     }
 
-    //curXFrame = ++curXFrame % frameCount; //Updating the sprite frame index
+    //Animate shark
     if (counter == 10) { // adjust this to change "walking speed" of animation
-        curXFrame = ++curXFrame % frameCount; //Updating the sprite frame index
+        curXFrame = ++curXFrame % frameCount;
         counter = 0;
     } else {
         counter++;
     }
     
-    
-    // it will count 0,1,2,0,1,2,0, etc
-    srcX = curXFrame * width; //Calculating the x coordinate for spritesheet
-    //if left is true, pick Y dim of the correct row
-    if (left) { //calculate srcY
+    srcX = curXFrame * width;
+    if (left) {
         srcY = trackLeft * height;
     }
-    //if the right is true, pick Y dim of the correct row
-    if (right) { //calculating y coordinate for spritesheet
+    if (right) {
         srcY = trackRight * height;
     }
     if (up) {
@@ -260,10 +252,6 @@ var update = function (modifier) {
     if (down) {
         srcY = trackDown * height;
     }
-    /* if (left == false && right == false && up == false && down == false) {
-        srcX = 1 * width;
-        srcY = 2 * height;
-    } */
 
     //  Checks if shark is touching jellyfish
     if (
@@ -302,6 +290,7 @@ var update = function (modifier) {
         window.location.reload();
     }
 
+    //If fish touches edge
     if (fish.x <= 0) {
         fish.xbool = true;
         fish.x += fish.speed * modifier;
@@ -391,8 +380,6 @@ var main = function () {
     then = now;
     requestAnimationFrame(main);
 };
-
-
 
 // Reset the game when the player catches a fish
 var reset = function () {
