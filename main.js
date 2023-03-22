@@ -278,8 +278,8 @@ var update = function (modifier) {
         srcY = trackDown * height;
     }
 
-    //Animate shark
-    if (fishcounter == 10) { // adjust this to change "walking speed" of animation
+    //Animate fish
+    if (fishcounter == 5) { // adjust this to change "walking speed" of animation
         fishcurXFrame = ++fishcurXFrame % frameCount;
         fishcounter = 0;
     } else {
