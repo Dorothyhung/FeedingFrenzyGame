@@ -5,21 +5,12 @@ canvas.width = 1500;
 canvas.height = 700;
 document.body.appendChild(canvas);
 
-let chessBoard = [
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X'],
-    ['X','X','X','X','X']
-];
-console.log(chessBoard)
-
 var savedSharkX = canvas.width / 2;
 var savedSharkY = canvas.height / 2;
 
 var soundEaten = "sounds/punch.wav";
 var soundBubbles = "sounds/bubbles.wav";
-var soundwin = "sounds/won.wav"
+var soundwin = "sounds/won.wav";
 var soundEfx = document.getElementById("soundEfx");
 
 // lots of variables to keep track of sprite geometry
@@ -48,6 +39,25 @@ var up = false;
 var down = false;
 
 
+var fishrows = 2;
+var fishcols = 3;
+var fishtrackLeft = 0;
+var fishtrackRight = 1;
+
+var fishspriteWidth = 269; // also spriteWidth/cols;
+var fishspriteHeight = 155; // also spriteHeight/rows;
+var fishwidth = fishspriteWidth / fishcols;
+var fishheight = fishspriteHeight / fishrows;
+
+var fishcurXFrame = 0; // start on left side
+var fishframeCount = 3; // 3 frames per row
+//x and y coordinates of the overall sprite image to get the single framewe want
+var fishsrcX = 0; // our image has no borders or other stuff
+var fishsrcY = 0;
+var fishleft = true;
+var fishright = false;
+
+
 // Background image
 var bgReady = false;
 var bgImage = new Image();
@@ -70,7 +80,8 @@ var fishImage = new Image();
 fishImage.onload = function () {
     fishReady = true;
 };
-fishImage.src = "images/fish.png";
+//fishImage.src = "images/fish.png";
+fishImage.src = "images/fishspritesheet2.png";
 
 // Jellyfish images
 var jellyfishReady = false;
@@ -88,24 +99,38 @@ var shark = {
     y: 0  // where on the canvas are they?
 };
 var fish = {
+    speed: 150,
     x: 0,
-    y: 0
+    y: 0,
+    xbool: false,
+    ybool: false
 };
 var jellyfish1 = {
+    speed: 100,
     x: 100,
-    y: 200
+    y: 200,
+    bool: true
 };
 var jellyfish2 = {
+    speed: 100,
     x: 1200,
-    y: 200
+    y: 200,
+    bool: true
 };
 var jellyfish3 = {
+    speed: 100,
     x: 900,
-    y: 550
+    y: 550,
+    xbool: false,
+    ybool: false
 };
 var fishEaten = 0;
 let lostGame = false;
 var counter = 0;
+var fishcounter = 0;
+
+var fishRandomDirection = [];
+
 
 // Handle keyboard controls
 var keysDown = {};
@@ -128,8 +153,8 @@ var update = function (modifier) {
         if (shark.y < 0) {
             shark.y = 0;
         }
-        left = false; // for animation
-        right = false; // for animation
+        left = false;
+        right = false;
         up = true;
         down = false;
     }
@@ -138,8 +163,8 @@ var update = function (modifier) {
         if (shark.y > 520) {
             shark.y = 520;
         }
-        left = false; // for animation
-        right = false; // for animation
+        left = false;
+        right = false;
         up = false;
         down = true;
     }
@@ -148,8 +173,8 @@ var update = function (modifier) {
         if (shark.x < 0) {
             shark.x = 0;
         }
-        left = true; // for animation
-        right = false; // for animation
+        left = true;
+        right = false;
         up = false;
         down = false;
     }
@@ -158,19 +183,69 @@ var update = function (modifier) {
         if (shark.x > 1300) {
             shark.x = 1300;
         }
-        left = false; // for animation
-        right = true; // for animation
+        left = false;
+        right = true;
         up = false;
         down = false;
     }
 
+    //Control fish directions
+    if(fish.xbool) {
+        fish.x += fish.speed * modifier;
+        fishleft = false;
+        fishright = true;
+    }
+    if (!fish.xbool) {
+        fish.x -= fish.speed * modifier;
+        fishleft = true;
+        fishright = false;
+    }
+    if(fish.ybool) {
+        fish.y += fish.speed * modifier;
+    }
+    if (!fish.ybool) {
+        fish.y -= fish.speed * modifier;
+    }
+
+    //Control jellyfish directions
+    if(jellyfish1.bool) {
+        jellyfish1.x += jellyfish1.speed * modifier;
+        jellyfish1.y += jellyfish1.speed * modifier;
+    }
+    if (!jellyfish1.bool) {
+        jellyfish1.x -= jellyfish1.speed * modifier;
+        jellyfish1.y -= jellyfish1.speed * modifier;
+    }
+    if(jellyfish2.bool) {
+        jellyfish2.x += jellyfish2.speed * modifier;
+        jellyfish2.y -= jellyfish2.speed * modifier;
+    }
+    if (!jellyfish2.bool) {
+        jellyfish2.x -= jellyfish2.speed * modifier;
+        jellyfish2.y += jellyfish2.speed * modifier;
+    }
+    if(jellyfish3.xbool) {
+        jellyfish3.x += jellyfish3.speed * modifier;
+    }
+    if (!jellyfish3.xbool) {
+        jellyfish3.x -= jellyfish3.speed * modifier;
+    }
+    if(jellyfish3.ybool) {
+        jellyfish3.y += jellyfish3.speed * modifier;
+    }
+    if (!jellyfish3.ybool) {
+        jellyfish3.y -= jellyfish3.speed * modifier;
+    }
+
+
     //  Checks if shark is touching fish
     if (
-        shark.x <= (fish.x + 50)
-        && fish.x <= (shark.x +100)
+        shark.x <= (fish.x + 75)
+        && fish.x <= (shark.x +50)
         && shark.y <= (fish.y + 50)
-        && fish.y <= (shark.y + 100)
+        && fish.y <= (shark.y + 75)
     ) {
+<<<<<<< HEAD
         console.log("here");
         console.log("shark=" + shark.x + ", " + shark.y);
         console.log("fish=" + fish.x + ", " + fish.y);
@@ -179,13 +254,12 @@ var update = function (modifier) {
         console.log("jellyfish3="  + jellyfish3.x + ", " + jellyfish3.y);
 
 
+=======
+>>>>>>> 7ae36519872fc043325ba368a47237fa9730832d
         soundEfx.src = soundEaten;
         soundEfx.play(); 
         ++fishEaten;       // keep track of our “score”
         
-        savedSharkX = shark.x;
-        savedSharkY = shark.y;
-        //reset();       // start a new cycle
         if (fishEaten == 3) {
             document.getElementById('sound').play();
             alert("You won!");
@@ -198,23 +272,19 @@ var update = function (modifier) {
         reset();
     }
 
-    //curXFrame = ++curXFrame % frameCount; //Updating the sprite frame index
+    //Animate shark
     if (counter == 10) { // adjust this to change "walking speed" of animation
-        curXFrame = ++curXFrame % frameCount; //Updating the sprite frame index
+        curXFrame = ++curXFrame % frameCount;
         counter = 0;
     } else {
         counter++;
     }
     
-    
-    // it will count 0,1,2,0,1,2,0, etc
-    srcX = curXFrame * width; //Calculating the x coordinate for spritesheet
-    //if left is true, pick Y dim of the correct row
-    if (left) { //calculate srcY
+    srcX = curXFrame * width;
+    if (left) {
         srcY = trackLeft * height;
     }
-    //if the right is true, pick Y dim of the correct row
-    if (right) { //calculating y coordinate for spritesheet
+    if (right) {
         srcY = trackRight * height;
     }
     if (up) {
@@ -223,46 +293,118 @@ var update = function (modifier) {
     if (down) {
         srcY = trackDown * height;
     }
-    /* if (left == false && right == false && up == false && down == false) {
-        srcX = 1 * width;
-        srcY = 2 * height;
-    } */
+
+    //Animate fish
+    if (fishcounter == 5) { // adjust this to change "walking speed" of animation
+        fishcurXFrame = ++fishcurXFrame % frameCount;
+        fishcounter = 0;
+    } else {
+        fishcounter++;
+    }
+    
+    fishsrcX = fishcurXFrame * fishwidth;
+    if (fishleft) {
+        fishsrcY = fishtrackLeft * fishheight;
+    }
+    if (fishright) {
+        fishsrcY = fishtrackRight * fishheight;
+    }
 
     //  Checks if shark is touching jellyfish
     if (
-        shark.x <= (jellyfish1.x + 25)
+        shark.x <= (jellyfish1.x + 50)
         && jellyfish1.x <= (shark.x + 125)
         && shark.y <= (jellyfish1.y + 75)
         && jellyfish1.y <= (shark.y + 125)
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver();
+        gameOver("jellyfish");
         window.location.reload();
     }
 
     if (
-        shark.x <= (jellyfish2.x + 25)
+        shark.x <= (jellyfish2.x + 50)
         && jellyfish2.x <= (shark.x + 125)
         && shark.y <= (jellyfish2.y + 75)
         && jellyfish2.y <= (shark.y + 125)
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver();
+        gameOver("jellyfish");
         window.location.reload();
     }
 
     if (
-        shark.x <= (jellyfish3.x + 25)
+        shark.x <= (jellyfish3.x + 50)
         && jellyfish3.x <= (shark.x + 125)
         && shark.y <= (jellyfish3.y + 75)
         && jellyfish3.y <= (shark.y + 125)
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver();
+        gameOver("jellyfish");
         window.location.reload();
+    }
+
+    //If fish touches edge
+    if (fish.x <= 0) {
+        fish.xbool = true;
+        fish.x += fish.speed * modifier;
+        fishright = true;
+        fishleft = false;
+    }
+    if (fish.x >= 1300) {
+        fish.xbool = false;
+        fish.x -= fish.speed * modifier;
+        fishright = false;
+        fishleft = true;
+    }
+    if (fish.y <= 0) {
+        fish.ybool = true;
+        fish.y += fish.speed * modifier;
+    }
+    if (fish.y >= 660) {
+        fish.ybool = false;
+        fish.y -= fish.speed * modifier;
+    }
+
+    //if jellyfish touches edge
+    if (jellyfish1.x <= 0 || jellyfish1.y < 0) {
+        jellyfish1.bool = true;
+        jellyfish1.x += jellyfish1.speed * modifier;
+        jellyfish1.y += jellyfish1.speed * modifier;
+    }
+    if (jellyfish1.x > 1400 || jellyfish1.y > 600) {
+        jellyfish1.bool = false;
+        jellyfish1.x -= jellyfish1.speed * modifier;
+        jellyfish1.y -= jellyfish1.speed * modifier;
+    }
+    if (jellyfish2.x <= 0 || jellyfish2.y > 600) {
+        jellyfish2.bool = true;
+        jellyfish2.x += jellyfish2.speed * modifier;
+        jellyfish2.y -= jellyfish2.speed * modifier;
+    }
+    if (jellyfish2.x > 1400 || jellyfish2.y < 0) {
+        jellyfish2.bool = false;
+        jellyfish2.x -= jellyfish2.speed * modifier;
+        jellyfish2.y += jellyfish2.speed * modifier;
+    }
+    if (jellyfish3.x <= 0) {
+        jellyfish3.xbool = true;
+        jellyfish3.x += jellyfish3.speed * modifier;
+    }
+    if (jellyfish3.x >= 1400) {
+        jellyfish3.xbool = false;
+        jellyfish3.x -= jellyfish3.speed * modifier;
+    }
+    if (jellyfish3.y <= 0) {
+        jellyfish3.ybool = true;
+        jellyfish3.y += jellyfish3.speed * modifier;
+    }
+    if (jellyfish3.y >= 600) {
+        jellyfish3.ybool = false;
+        jellyfish3.y -= jellyfish3.speed * modifier;
     }
 };
 
@@ -281,7 +423,8 @@ var render = function () {
          ctx.drawImage(sharkImage, srcX, srcY, width, height, shark.x, shark.y, width, height);
     }
     if (fishReady) {
-        ctx.drawImage(fishImage, fish.x, fish.y);
+        //ctx.drawImage(fishImage, fish.x, fish.y);
+        ctx.drawImage(fishImage, fishsrcX, fishsrcY, fishwidth, fishheight, fish.x, fish.y, fishwidth, fishheight);
     }
     if (jellyfishReady) {
         ctx.drawImage(jellyfishImage, jellyfish1.x, jellyfish1.y);
@@ -300,22 +443,10 @@ var main = function () {
     requestAnimationFrame(main);
 };
 
-
-
 // Reset the game when the player catches a fish
 var reset = function () {
-    /* if (fishEaten == 3) {
-        document.getElementById('sound').play();
-        alert("You won!");
-        window.location.reload();
-    } */
-    for (let i = 0; i < chessBoard.length; i++) {
-        for (let j = 0; j < chessBoard[0].length; j++) {
-            chessBoard[i][j] = "X";
-        }
-    }
-    shark.x = savedSharkX;
-    shark.y = savedSharkY;
+    shark.x = canvas.width / 2;
+    shark.y = 250;
     placeItem(fish);
     placeItem(jellyfish1);
     placeItem(jellyfish2);
@@ -323,36 +454,31 @@ var reset = function () {
 };
 
 var placeItem = function(item) {
-    //item.x = (Math.random() * (canvas.width - 200));
-    //item.y = (Math.random() * (canvas.height - 200));
-
-
-    //This is to make sure none of the characters end of touching each other
-    //This sitll doesn't work video 1:25
-    let a = 0;
-    let b = 0;
-    let success = false;
-
-    while(!success) {
-        a = Math.floor(Math.random() * 5);
-        b = Math.floor(Math.random() * 5);
-        if (chessBoard[a][b] == "O") {
-            success = true;
-        } else {
-            chessBoard[a][b] = "O";
-            /* item.x = ((a*150) +50);
-            item.y = ((b*65) +50); */
-            item.x = ((a*280) +50);
-            item.y = ((b*120) +50);
-        }
-        
+    let xposition = 700;
+    let yposition = 300;
+    while (xposition >= 600 & xposition <= 800) {
+        xposition = Math.random() * 1400;
     }
+    while (yposition >= 200 && yposition <= 400) {
+        yposition = Math.random() * 600;
+    }
+    item.x = xposition;
+    item.y = yposition;
 }
 
-let gameOver = function() {
+let gameOver = function(item) {
     document.getElementById('soundgamelost').play();
+<<<<<<< HEAD
     alert("You got stung by a jellyfish, game over!");
     keysDown = {};
+=======
+    if (item == 'jellyfish') {
+        alert("You got stung by a jellyfish, game over!");
+    }
+    if (item == 'fish') {
+        alert("Oh no! The fish got away, game over!");
+    }
+>>>>>>> 7ae36519872fc043325ba368a47237fa9730832d
     gameOver = true;
     reset();
     fishEaten = 0;
