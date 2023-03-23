@@ -19,6 +19,7 @@ var savedSharkY = canvas.height / 2;
 
 var soundEaten = "sounds/punch.wav";
 var soundBubbles = "sounds/bubbles.wav";
+var soundwin = "sounds/won.wav"
 var soundEfx = document.getElementById("soundEfx");
 
 // lots of variables to keep track of sprite geometry
@@ -173,6 +174,11 @@ var update = function (modifier) {
         console.log("here");
         console.log("shark=" + shark.x + ", " + shark.y);
         console.log("fish=" + fish.x + ", " + fish.y);
+        console.log("jellyfish1="  + jellyfish1.x + ", " + jellyfish1.y);
+        console.log("jellyfish2="  + jellyfish2.x + ", " + jellyfish2.y);
+        console.log("jellyfish3="  + jellyfish3.x + ", " + jellyfish3.y);
+
+
         soundEfx.src = soundEaten;
         soundEfx.play(); 
         ++fishEaten;       // keep track of our “score”
@@ -183,7 +189,11 @@ var update = function (modifier) {
         if (fishEaten == 3) {
             document.getElementById('sound').play();
             alert("You won!");
+            keysDown = {};
+            gameOver = true;
+
             window.location.reload();
+            
         }
         reset();
     }
@@ -342,6 +352,7 @@ var placeItem = function(item) {
 let gameOver = function() {
     document.getElementById('soundgamelost').play();
     alert("You got stung by a jellyfish, game over!");
+    keysDown = {};
     gameOver = true;
     reset();
     fishEaten = 0;
