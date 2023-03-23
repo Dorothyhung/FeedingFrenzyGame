@@ -245,7 +245,6 @@ var update = function (modifier) {
         && shark.y <= (fish.y + 50)
         && fish.y <= (shark.y + 75)
     ) {
-<<<<<<< HEAD
         console.log("here");
         console.log("shark=" + shark.x + ", " + shark.y);
         console.log("fish=" + fish.x + ", " + fish.y);
@@ -254,8 +253,6 @@ var update = function (modifier) {
         console.log("jellyfish3="  + jellyfish3.x + ", " + jellyfish3.y);
 
 
-=======
->>>>>>> 7ae36519872fc043325ba368a47237fa9730832d
         soundEfx.src = soundEaten;
         soundEfx.play(); 
         ++fishEaten;       // keep track of our “score”
@@ -468,17 +465,14 @@ var placeItem = function(item) {
 
 let gameOver = function(item) {
     document.getElementById('soundgamelost').play();
-<<<<<<< HEAD
     alert("You got stung by a jellyfish, game over!");
     keysDown = {};
-=======
     if (item == 'jellyfish') {
         alert("You got stung by a jellyfish, game over!");
     }
     if (item == 'fish') {
         alert("Oh no! The fish got away, game over!");
     }
->>>>>>> 7ae36519872fc043325ba368a47237fa9730832d
     gameOver = true;
     reset();
     fishEaten = 0;
