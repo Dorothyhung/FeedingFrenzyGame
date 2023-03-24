@@ -436,7 +436,7 @@ var reset = function () {
     placeItem(jellyfish3);
 };
 
-var placeItem = function(item) {
+var placeItem = function(item) { //ensures fish + jellys don't start too close to shark
     let xposition = 700;
     let yposition = 300;
     while (xposition >= 600 & xposition <= 800) {
@@ -449,6 +449,7 @@ var placeItem = function(item) {
     item.y = yposition;
 }
 
+//when fish touches jellyfish
 let gameOver = function(item) {
     document.getElementById('soundgamelost').play();
     alert("You got stung by a jellyfish, game over!");
