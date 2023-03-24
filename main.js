@@ -13,50 +13,45 @@ var soundBubbles = "sounds/bubbles.wav";
 var soundwin = "sounds/won.wav";
 var soundEfx = document.getElementById("soundEfx");
 
-// lots of variables to keep track of sprite geometry
-// I have 8 rows and 3 cols in my space ship sprite sheet
+//Shark sprite variables
 var rows = 4;
 var cols = 3;
 var trackDown = 0;
 var trackLeft = 1;
 var trackRight = 2;
-var trackUp = 3; // not using up and down in this version, see next version
+var trackUp = 3;
 
-var spriteWidth = 550; // also spriteWidth/cols;
-var spriteHeight = 708; // also spriteHeight/rows;
+var spriteWidth = 550;
+var spriteHeight = 708;
 var width = spriteWidth / cols;
 var height = spriteHeight / rows;
 
 var curXFrame = 0; // start on left side
 var frameCount = 3; // 3 frames per row
-//x and y coordinates of the overall sprite image to get the single framewe want
-var srcX = 0; // our image has no borders or other stuff
+var srcX = 0; //x and y coordinates of sprite we want
 var srcY = 0;
-//Assuming that at start the character will move right side
 var left = false;
 var right = true;
 var up = false;
 var down = false;
 
-
+//Fish sprite variables
 var fishrows = 2;
 var fishcols = 3;
 var fishtrackLeft = 0;
 var fishtrackRight = 1;
 
-var fishspriteWidth = 269; // also spriteWidth/cols;
-var fishspriteHeight = 155; // also spriteHeight/rows;
+var fishspriteWidth = 269;
+var fishspriteHeight = 155;
 var fishwidth = fishspriteWidth / fishcols;
 var fishheight = fishspriteHeight / fishrows;
 
 var fishcurXFrame = 0; // start on left side
 var fishframeCount = 3; // 3 frames per row
-//x and y coordinates of the overall sprite image to get the single framewe want
-var fishsrcX = 0; // our image has no borders or other stuff
+var fishsrcX = 0; // x and y coordinates of sprite we want
 var fishsrcY = 0;
 var fishleft = true;
 var fishright = false;
-
 
 // Background image
 var bgReady = false;
@@ -107,20 +102,20 @@ var fish = {
 };
 var jellyfish1 = {
     speed: 100,
-    x: 100,
-    y: 200,
+    x: 0,
+    y: 0,
     bool: true
 };
 var jellyfish2 = {
     speed: 100,
-    x: 1200,
-    y: 200,
+    x: 0,
+    y: 0,
     bool: true
 };
 var jellyfish3 = {
     speed: 100,
-    x: 900,
-    y: 550,
+    x: 0,
+    y: 0,
     xbool: false,
     ybool: false
 };
@@ -245,18 +240,10 @@ var update = function (modifier) {
         && shark.y <= (fish.y + 50)
         && fish.y <= (shark.y + 75)
     ) {
-        console.log("here");
-        console.log("shark=" + shark.x + ", " + shark.y);
-        console.log("fish=" + fish.x + ", " + fish.y);
-        console.log("jellyfish1="  + jellyfish1.x + ", " + jellyfish1.y);
-        console.log("jellyfish2="  + jellyfish2.x + ", " + jellyfish2.y);
-        console.log("jellyfish3="  + jellyfish3.x + ", " + jellyfish3.y);
-
-
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        ++fishEaten;       // keep track of our “score”
-        
+        ++fishEaten;       // keep track of score
+        //Wins when you eat 3 fish
         if (fishEaten == 3) {
             document.getElementById('sound').play();
             alert("You won!");
@@ -316,7 +303,7 @@ var update = function (modifier) {
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver("jellyfish");
+        gameOver();
         window.location.reload();
     }
 
@@ -328,7 +315,7 @@ var update = function (modifier) {
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver("jellyfish");
+        gameOver();
         window.location.reload();
     }
 
@@ -340,7 +327,7 @@ var update = function (modifier) {
     ) {
         soundEfx.src = soundEaten;
         soundEfx.play(); 
-        gameOver("jellyfish");
+        gameOver();
         window.location.reload();
     }
 
@@ -409,7 +396,7 @@ var render = function () {
     if (bgReady) {
         ctx.drawImage(bgImage, 0, 0);
     }
-    // Score
+    // Score image
     ctx.fillStyle = "rgb(250, 250, 250)";
     ctx.font = "24px Helvetica";
     ctx.textAlign = "left";
@@ -420,7 +407,6 @@ var render = function () {
          ctx.drawImage(sharkImage, srcX, srcY, width, height, shark.x, shark.y, width, height);
     }
     if (fishReady) {
-        //ctx.drawImage(fishImage, fish.x, fish.y);
         ctx.drawImage(fishImage, fishsrcX, fishsrcY, fishwidth, fishheight, fish.x, fish.y, fishwidth, fishheight);
     }
     if (jellyfishReady) {
@@ -467,12 +453,6 @@ let gameOver = function(item) {
     document.getElementById('soundgamelost').play();
     alert("You got stung by a jellyfish, game over!");
     keysDown = {};
-    if (item == 'jellyfish') {
-        alert("You got stung by a jellyfish, game over!");
-    }
-    if (item == 'fish') {
-        alert("Oh no! The fish got away, game over!");
-    }
     gameOver = true;
     reset();
     fishEaten = 0;
